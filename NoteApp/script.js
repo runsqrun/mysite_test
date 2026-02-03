@@ -189,8 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.addEventListener('touchend', (e) => handleTouchEnd(e, card));
                 card.addEventListener('touchmove', (e) => handleTouchMove(e, card), { passive: false });
                 
-                // 点击事件
+                // 点击事件（仅用于鼠标点击，触摸由touchend处理）
+                let lastTouchTime = 0;
                 card.addEventListener('click', (e) => {
+                    // 如果刚刚有触摸事件，忽略此click（避免重复触发）
+                    if (Date.now() - lastTouchTime < 500) {
+                        return;
+                    }
                     const id = parseInt(card.dataset.id);
                     if (isEditMode) {
                         e.preventDefault();
@@ -199,6 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         openModal(id);
                     }
                 });
+                
+                // 记录触摸时间
+                card.addEventListener('touchstart', () => {
+                    lastTouchTime = Date.now();
+                }, { passive: true });
                 
                 // 拖拽事件
                 card.addEventListener('dragstart', (e) => handleDragStart(e, card));
@@ -620,8 +630,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (isTouchDragging) {
             endTouchDrag(e);
+            e.preventDefault();
+            e.stopPropagation();
         } else if (isEditMode) {
-            // 编辑模式下点击切换选中
+            // 编辑模式下点击切换选中，阻止click事件触发
+            e.preventDefault();
+            e.stopPropagation();
             const id = parseInt(card.dataset.id);
             toggleNoteSelection(id, card);
         }
