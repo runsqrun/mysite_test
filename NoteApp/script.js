@@ -947,8 +947,18 @@ document.addEventListener('DOMContentLoaded', () => {
             carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;
             
             // 实时更新卡片状态 - 根据滑动距离计算当前应该高亮的卡片
-            const draggedCards = Math.round(-carouselCurrentX / (cardWidth + gap));
-            const visualIndex = Math.max(0, Math.min(notes.length - 1, currentCardIndex + draggedCards));
+            // 当滑动超过卡片宽度一半时切换active状态
+            const halfCard = (cardWidth + gap) / 2;
+            let visualIndex = currentCardIndex;
+            
+            if (carouselCurrentX < -halfCard) {
+                // 向左滑超过一半，下一张active
+                visualIndex = Math.min(notes.length - 1, currentCardIndex + Math.ceil(-carouselCurrentX / (cardWidth + gap)));
+            } else if (carouselCurrentX > halfCard) {
+                // 向右滑超过一半，上一张active
+                visualIndex = Math.max(0, currentCardIndex - Math.ceil(carouselCurrentX / (cardWidth + gap)));
+            }
+            
             updateCardStatesVisual(visualIndex);
         };
         

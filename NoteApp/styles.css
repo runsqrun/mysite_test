@@ -1380,7 +1380,8 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 0 calc(50% - 150px);
+    padding-left: calc(50% - 150px);
+    padding-right: calc(50% - 150px);
     transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     will-change: transform;
     pointer-events: none;
