@@ -1042,6 +1042,30 @@ document.addEventListener('DOMContentLoaded', () => {
             isDraggingCarousel = false;
             carousel.classList.remove('dragging');
 
+            // 轻点（非拖拽）直接处理：点居中卡片打开详情，点其它卡片则先居中
+            if (!didDrag) {
+                const card = e.target.closest('.ps-card');
+                if (card) {
+                    const cardIndex = parseInt(card.dataset.index);
+                    if (Number.isInteger(cardIndex)) {
+                        if (cardIndex === currentCardIndex) {
+                            const noteId = parseInt(card.dataset.id);
+                            closePersonalSpaceHandler();
+                            setTimeout(() => openModal(noteId), 300);
+                        } else {
+                            currentCardIndex = Math.max(0, Math.min(notes.length - 1, cardIndex));
+                            updateCarouselPosition(true);
+                            updateCardStates(currentCardIndex);
+                        }
+                    }
+
+                    carouselCurrentX = 0;
+                    carouselRawX = 0;
+                    lastDragEndAt = Date.now();
+                    return;
+                }
+            }
+
             const { step } = getPsCarouselMetrics();
             const elapsed = Math.max(1, Date.now() - dragStartAt);
             const velocity = carouselRawX / elapsed;
