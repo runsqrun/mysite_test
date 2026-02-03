@@ -841,8 +841,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 个人空间内的添加按钮
     psAddNoteBtn.addEventListener('click', () => {
+        openModal();
         closePersonalSpaceHandler();
-        setTimeout(() => openModal(), 300);
     });
     
     function openPersonalSpace() {
@@ -1050,8 +1050,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (Number.isInteger(cardIndex)) {
                         if (cardIndex === currentCardIndex) {
                             const noteId = parseInt(card.dataset.id);
+                            openModal(noteId);
                             closePersonalSpaceHandler();
-                            setTimeout(() => openModal(noteId), 300);
                         } else {
                             currentCardIndex = Math.max(0, Math.min(notes.length - 1, cardIndex));
                             updateCarouselPosition(true);
@@ -1137,8 +1137,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // 如果点击的是当前active的卡片，进入详情页
             if (cardIndex === currentCardIndex) {
                 const noteId = parseInt(card.dataset.id);
+                openModal(noteId);
                 closePersonalSpaceHandler();
-                setTimeout(() => openModal(noteId), 300);
             } else {
                 // 点击其他卡片，滑动到那张卡片
                 currentCardIndex = cardIndex;
