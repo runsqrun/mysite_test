@@ -769,16 +769,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const moreBtn = document.getElementById('moreBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');
     const personalSpaceBtn = document.getElementById('personalSpaceBtn');
-    const personalSpaceOverlay = document.getElementById('personalSpaceOverlay');
+    const personalSpacePage = document.getElementById('personalSpacePage');
     const closePersonalSpace = document.getElementById('closePersonalSpace');
-    const cardStack = document.getElementById('cardStack');
-    const cardIndicators = document.getElementById('cardIndicators');
-    const swipeLeftBtn = document.getElementById('swipeLeftBtn');
-    const swipeRightBtn = document.getElementById('swipeRightBtn');
+    const psCarousel = document.getElementById('psCarousel');
+    const psIndicators = document.getElementById('psIndicators');
+    const psCurrentIndex = document.getElementById('psCurrentIndex');
+    const psTotalCount = document.getElementById('psTotalCount');
     const editCurrentCardBtn = document.getElementById('editCurrentCardBtn');
     
     let currentCardIndex = 0;
-    let swipeCards = [];
+    let carouselStartX = 0;
+    let carouselCurrentX = 0;
+    let isDraggingCarousel = false;
     
     // 切换下拉菜单
     moreBtn.addEventListener('click', (e) => {
@@ -804,27 +806,29 @@ document.addEventListener('DOMContentLoaded', () => {
         closePersonalSpaceHandler();
     });
     
-    personalSpaceOverlay.addEventListener('click', (e) => {
-        if (e.target === personalSpaceOverlay) {
-            closePersonalSpaceHandler();
-        }
-    });
-    
     function openPersonalSpace() {
-        personalSpaceOverlay.classList.remove('hidden');
+        personalSpacePage.classList.remove('hidden');
         currentCardIndex = 0;
-        renderCardStack();
+        renderCarousel();
+        bindCarouselEvents();
     }
     
     function closePersonalSpaceHandler() {
-        personalSpaceOverlay.classList.add('hidden');
+        personalSpacePage.classList.add('hidden');
     }
     
-    // 渲染卡片堆
-    function renderCardStack() {
+    // 渲染轮播卡片
+    function renderCarousel() {
+        psTotalCount.textContent = notes.length;
+        
         if (notes.length === 0) {
-            cardStack.innerHTML = `
-                <div class="card-stack-empty">
+            psCarousel.innerHTML = '';
+            psIndicators.innerHTML = '';
+            psCurrentIndex.textContent = '0';
+            
+            const wrapper = document.querySelector('.ps-carousel-wrapper');
+            wrapper.innerHTML = `
+                <div class="ps-empty">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                         <polyline points="14 2 14 8 20 8"></polyline>
@@ -832,162 +836,159 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p>暂无备忘</p>
                 </div>
             `;
-            cardIndicators.innerHTML = '';
             return;
         }
         
-        // 只渲染当前及后面的卡片（最多3张）
-        const cardsToShow = notes.slice(currentCardIndex, currentCardIndex + 3);
-        
-        cardStack.innerHTML = cardsToShow.map((note, index) => createSwipeCard(note, index)).join('');
+        // 渲染所有卡片
+        psCarousel.innerHTML = notes.map((note, index) => createPsCard(note, index)).join('');
         
         // 渲染指示器
-        cardIndicators.innerHTML = notes.map((_, index) => 
-            `<div class="card-indicator ${index === currentCardIndex ? 'active' : ''}"></div>`
+        psIndicators.innerHTML = notes.map((_, index) => 
+            `<div class="ps-indicator ${index === currentCardIndex ? 'active' : ''}"></div>`
         ).join('');
         
-        // 绑定卡片拖拽事件
-        swipeCards = document.querySelectorAll('.swipe-card');
-        if (swipeCards.length > 0) {
-            bindSwipeEvents(swipeCards[0]);
-        }
+        updateCarouselPosition(false);
+        updateCardStates();
     }
     
-    // 创建滑动卡片HTML
-    function createSwipeCard(note, stackIndex) {
-        const starHtml = note.starred ? '<span class="swipe-card-star">★</span>' : '';
+    // 创建个人空间卡片HTML
+    function createPsCard(note, index) {
+        const starHtml = note.starred ? '<span class="ps-card-star">★</span>' : '';
         
         let imagesHtml = '';
         if (note.images && note.images.length > 0) {
             imagesHtml = `
-                <div class="swipe-card-images">
+                <div class="ps-card-images">
                     ${note.images.map(img => `<img src="${img}" alt="">`).join('')}
                 </div>
             `;
         } else if (note.thumbnail) {
             imagesHtml = `
-                <div class="swipe-card-images">
+                <div class="ps-card-images">
                     <img src="${note.thumbnail}" alt="">
                 </div>
             `;
         }
         
         return `
-            <div class="swipe-card" data-id="${note.id}" data-index="${stackIndex}">
-                <div class="swipe-indicator like">喜欢</div>
-                <div class="swipe-indicator nope">跳过</div>
-                <div class="swipe-card-header">
-                    <h3 class="swipe-card-title">${escapeHtml(note.title) || '无标题'}</h3>
+            <div class="ps-card" data-id="${note.id}" data-index="${index}">
+                <div class="ps-card-header">
+                    <span class="ps-card-date">${note.date}</span>
                     ${starHtml}
                 </div>
-                <div class="swipe-card-date">${note.date}</div>
-                <div class="swipe-card-content">${escapeHtml(note.content) || '无内容'}</div>
+                <h3 class="ps-card-title">${escapeHtml(note.title) || '无标题'}</h3>
+                <div class="ps-card-content">${escapeHtml(note.content) || '无内容'}</div>
                 ${imagesHtml}
+                <div class="ps-card-accent"></div>
             </div>
         `;
     }
     
-    // 绑定滑动事件
-    function bindSwipeEvents(card) {
-        let startX = 0;
-        let startY = 0;
-        let currentX = 0;
-        let isDragging = false;
+    // 更新轮播位置
+    function updateCarouselPosition(animate = true) {
+        const cardWidth = 320;
+        const gap = 20;
+        const offset = currentCardIndex * (cardWidth + gap);
+        
+        psCarousel.style.transition = animate ? 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
+        psCarousel.style.transform = `translateX(-${offset}px)`;
+        
+        // 更新索引显示
+        psCurrentIndex.textContent = currentCardIndex + 1;
+        
+        // 更新指示器
+        document.querySelectorAll('.ps-indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === currentCardIndex);
+        });
+    }
+    
+    // 更新卡片状态
+    function updateCardStates() {
+        document.querySelectorAll('.ps-card').forEach((card, index) => {
+            card.classList.remove('active', 'prev', 'next');
+            
+            if (index === currentCardIndex) {
+                card.classList.add('active');
+            } else if (index === currentCardIndex - 1) {
+                card.classList.add('prev');
+            } else if (index === currentCardIndex + 1) {
+                card.classList.add('next');
+            }
+        });
+    }
+    
+    // 绑定轮播事件
+    function bindCarouselEvents() {
+        const carousel = psCarousel;
         
         const onStart = (e) => {
-            isDragging = true;
-            card.classList.add('dragging');
+            isDraggingCarousel = true;
+            carousel.classList.add('dragging');
             const point = e.touches ? e.touches[0] : e;
-            startX = point.clientX;
-            startY = point.clientY;
+            carouselStartX = point.clientX;
+            carouselCurrentX = 0;
         };
         
         const onMove = (e) => {
-            if (!isDragging) return;
+            if (!isDraggingCarousel) return;
             
             const point = e.touches ? e.touches[0] : e;
-            currentX = point.clientX - startX;
-            const currentY = point.clientY - startY;
+            carouselCurrentX = point.clientX - carouselStartX;
             
-            // 旋转角度
-            const rotate = currentX * 0.1;
+            const cardWidth = 320;
+            const gap = 20;
+            const baseOffset = currentCardIndex * (cardWidth + gap);
             
-            card.style.transform = `translateX(${currentX}px) translateY(${currentY * 0.3}px) rotate(${rotate}deg)`;
-            
-            // 显示滑动指示
-            const likeIndicator = card.querySelector('.swipe-indicator.like');
-            const nopeIndicator = card.querySelector('.swipe-indicator.nope');
-            
-            if (currentX > 50) {
-                likeIndicator.style.opacity = Math.min((currentX - 50) / 100, 1);
-                nopeIndicator.style.opacity = 0;
-            } else if (currentX < -50) {
-                nopeIndicator.style.opacity = Math.min((-currentX - 50) / 100, 1);
-                likeIndicator.style.opacity = 0;
-            } else {
-                likeIndicator.style.opacity = 0;
-                nopeIndicator.style.opacity = 0;
-            }
+            carousel.style.transition = 'none';
+            carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;
         };
         
         const onEnd = () => {
-            if (!isDragging) return;
-            isDragging = false;
-            card.classList.remove('dragging');
+            if (!isDraggingCarousel) return;
+            isDraggingCarousel = false;
+            carousel.classList.remove('dragging');
             
-            const threshold = 100;
+            const threshold = 80;
             
-            if (currentX > threshold) {
-                // 向右滑 - 喜欢
-                swipeCard('right');
-            } else if (currentX < -threshold) {
-                // 向左滑 - 跳过
-                swipeCard('left');
-            } else {
-                // 回弹
-                card.style.transform = '';
-                card.querySelector('.swipe-indicator.like').style.opacity = 0;
-                card.querySelector('.swipe-indicator.nope').style.opacity = 0;
+            if (carouselCurrentX < -threshold && currentCardIndex < notes.length - 1) {
+                // 向左滑 - 下一张
+                currentCardIndex++;
+            } else if (carouselCurrentX > threshold && currentCardIndex > 0) {
+                // 向右滑 - 上一张
+                currentCardIndex--;
             }
             
-            currentX = 0;
+            updateCarouselPosition(true);
+            updateCardStates();
+            carouselCurrentX = 0;
         };
         
-        // 鼠标事件
-        card.addEventListener('mousedown', onStart);
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onEnd);
+        // 移除旧事件（如果有）
+        carousel.onmousedown = onStart;
+        carousel.ontouchstart = onStart;
         
-        // 触摸事件
-        card.addEventListener('touchstart', onStart, { passive: true });
-        card.addEventListener('touchmove', onMove, { passive: true });
-        card.addEventListener('touchend', onEnd);
-    }
-    
-    // 滑动卡片
-    function swipeCard(direction) {
-        const card = swipeCards[0];
-        if (!card) return;
+        document.onmousemove = (e) => {
+            if (isDraggingCarousel) onMove(e);
+        };
+        carousel.ontouchmove = onMove;
         
-        const flyOut = direction === 'right' ? 500 : -500;
+        document.onmouseup = onEnd;
+        carousel.ontouchend = onEnd;
         
-        card.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-        card.style.transform = `translateX(${flyOut}px) rotate(${direction === 'right' ? 30 : -30}deg)`;
-        card.style.opacity = '0';
-        
-        setTimeout(() => {
-            currentCardIndex++;
-            if (currentCardIndex >= notes.length) {
-                currentCardIndex = 0; // 循环
+        // 点击卡片打开编辑
+        carousel.addEventListener('click', (e) => {
+            if (Math.abs(carouselCurrentX) > 10) return; // 拖拽时不触发
+            
+            const card = e.target.closest('.ps-card');
+            if (card && card.classList.contains('active')) {
+                const noteId = parseInt(card.dataset.id);
+                closePersonalSpaceHandler();
+                setTimeout(() => openModal(noteId), 300);
             }
-            renderCardStack();
-        }, 300);
+        });
     }
     
-    // 底部按钮
-    swipeLeftBtn.addEventListener('click', () => swipeCard('left'));
-    swipeRightBtn.addEventListener('click', () => swipeCard('right'));
-    
+    // 编辑当前卡片
     editCurrentCardBtn.addEventListener('click', () => {
         if (notes.length > 0 && currentCardIndex < notes.length) {
             const noteId = notes[currentCardIndex].id;
