@@ -1,0 +1,36 @@
+{
+  "iOS/iPadOS": {
+    "app_info": {
+      "trackId": 6673908449,
+      "trackName": "小米互联服务",
+      "bundleId": "com.xiaomi.hyperConnect",
+      "sellerName": "Beijing Xiaomi Co., Ltd",
+      "version": "2.6.0",
+      "primaryGenreName": "Utilities",
+      "averageUserRating": 4.31472,
+      "userRatingCount": 4871,
+      "description": "小米互联服务是一款运行在苹果设备上，并能和小米设备之间进行文件互传、数据流转和桌面共享等跨端协同和控制的应用。\n\n使用小米互联服务需要小米手机升级到小米澎湃OS 2系统，并确保 跨屏协同服务 版本号不低于16.00.50，以及 小米互传 不低于3.3.0。（可在手机设置-应用设置查看应用版本号）。\n如果应用低于最低版本号要求，可前往应用商店-我的-应用升级，在升级列表升级跨屏协同服务和小米互传。\n",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fb/c6/cd/fbc6cdaf-1c82-7c2f-a920-6c571bbc78cd/AppIcon-0-1x_U007emarketing-0-11-0-85-220-0.png/100x100bb.jpg",
+      "releaseDate": "2024-10-24T07:00:00Z",
+      "currentVersionReleaseDate": "2026-01-20T13:19:57Z"
+    },
+    "review_count": 500
+  },
+  "macOS": {
+    "app_info": {
+      "trackId": 6673908449,
+      "trackName": "小米互联服务",
+      "bundleId": "com.xiaomi.hyperConnect",
+      "sellerName": "Beijing Xiaomi Co., Ltd",
+      "version": "2.6.0",
+      "primaryGenreName": "Utilities",
+      "averageUserRating": 4.31472,
+      "userRatingCount": 4871,
+      "description": "小米互联服务是一款运行在苹果设备上，并能和小米设备之间进行文件互传、数据流转和桌面共享等跨端协同和控制的应用。\n\n使用小米互联服务需要小米手机升级到小米澎湃OS 2系统，并确保 跨屏协同服务 版本号不低于16.00.50，以及 小米互传 不低于3.3.0。（可在手机设置-应用设置查看应用版本号）。\n如果应用低于最低版本号要求，可前往应用商店-我的-应用升级，在升级列表升级跨屏协同服务和小米互传。\n",
+      "artworkUrl100": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fb/c6/cd/fbc6cdaf-1c82-7c2f-a920-6c571bbc78cd/AppIcon-0-1x_U007emarketing-0-11-0-85-220-0.png/100x100bb.jpg",
+      "releaseDate": "2024-10-24T07:00:00Z",
+      "currentVersionReleaseDate": "2026-01-20T13:19:57Z"
+    },
+    "review_count": 500
+  }
+}

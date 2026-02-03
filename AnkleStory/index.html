@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankle Recovery - 100 Days Journey</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <button class="text-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                TEXT
+            </button>
+        </div>
+        <div class="header-center">
+            <div class="progress-container">
+                <div class="progress-line">
+                    <div class="progress-track"></div>
+                    <div class="progress-fill"></div>
+                    <div class="progress-dot"></div>
+                </div>
+                <div class="progress-labels">
+                    <span class="label-start">Day 0</span>
+                    <span class="label-end">Day 100</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="stats">
+                <div class="stat-value" id="steps-count">0</div>
+                <div class="stat-label">steps</div>
+                <div class="stat-value secondary" id="miles-count">0</div>
+                <div class="stat-label secondary">miles</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 当前天数显示 -->
+    <div class="day-indicator">
+        <span class="day-number">Day <span id="current-day">0</span></span>
+    </div>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- Day 1 -->
+        <section class="day-section" data-day="1">
+            <div class="photo-grid">
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 1</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 2</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 3</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 4</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 2 -->
+        <section class="day-section" data-day="2">
+            <div class="photo-grid mixed">
+                <div class="photo-item tall">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #1a3a1a 0%, #0a2a0a 100%);">
+                        <span class="photo-hint">Photo 5</span>
+                    </div>
+                </div>
+                <div class="text-block">
+                    <h2 class="day-title">DAY TWO</h2>
+                    <p class="day-story">
+                        第一次尝试用拐杖走路。从床到卫生间的距离感觉像是跑了一场马拉松。
+                        窗外的阳光很好，但我只能透过窗户看着外面的世界。
+                    </p>
+                    <a href="#" class="read-more">read more</a>
+                    <div class="doodle">
+                        <svg viewBox="0 0 100 100" class="crutch-doodle">
+                            <line x1="30" y1="20" x2="50" y2="80" stroke="currentColor" stroke-width="3"/>
+                            <line x1="70" y1="20" x2="50" y2="80" stroke="currentColor" stroke-width="3"/>
+                            <line x1="20" y1="35" x2="40" y2="35" stroke="currentColor" stroke-width="2"/>
+                            <line x1="60" y1="35" x2="80" y2="35" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 6</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 7</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 7 -->
+        <section class="day-section" data-day="7">
+            <div class="photo-grid">
+                <div class="photo-item wide">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 8</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 9</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 10</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 14 -->
+        <section class="day-section" data-day="14">
+            <div class="photo-grid mixed">
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 11</span>
+                    </div>
+                </div>
+                <div class="text-block dark">
+                    <h2 class="day-title">DAY FOURTEEN</h2>
+                    <p class="day-story">
+                        两周了。今天第一次出门，坐在轮椅上被推着在小区里转了一圈。
+                        阳光照在脸上的感觉真好，空气中有初秋的味道。
+                    </p>
+                    <a href="#" class="read-more">read more</a>
+                </div>
+                <div class="photo-item tall">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 12</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 13</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 30 -->
+        <section class="day-section" data-day="30">
+            <div class="photo-grid">
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 14</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 15</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 16</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 17</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 45 -->
+        <section class="day-section" data-day="45">
+            <div class="photo-grid mixed">
+                <div class="photo-item tall">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 18</span>
+                    </div>
+                </div>
+                <div class="text-block">
+                    <h2 class="day-title">DAY FORTY-FIVE</h2>
+                    <p class="day-story">
+                        今天拆了石膏！脚踝看起来还是肿的，但医生说恢复得不错。
+                        开始了漫长的康复训练之旅。
+                    </p>
+                    <a href="#" class="read-more">read more</a>
+                    <div class="doodle">
+                        <svg viewBox="0 0 100 100" class="foot-doodle">
+                            <ellipse cx="50" cy="60" rx="25" ry="15" stroke="currentColor" fill="none" stroke-width="2"/>
+                            <path d="M30 55 Q20 40 35 35" stroke="currentColor" fill="none" stroke-width="2"/>
+                            <circle cx="38" cy="48" r="3" fill="currentColor"/>
+                            <circle cx="48" cy="45" r="3" fill="currentColor"/>
+                            <circle cx="58" cy="46" r="3" fill="currentColor"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 19</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 20</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 60 -->
+        <section class="day-section" data-day="60">
+            <div class="photo-grid">
+                <div class="photo-item wide">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 21</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 22</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 23</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 75 -->
+        <section class="day-section" data-day="75">
+            <div class="photo-grid mixed">
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 24</span>
+                    </div>
+                </div>
+                <div class="text-block dark">
+                    <h2 class="day-title">DAY SEVENTY-FIVE</h2>
+                    <p class="day-story">
+                        第一次不用拐杖走了100米！虽然走得很慢，但每一步都是胜利。
+                        康复的路还很长，但我已经能看到终点的曙光。
+                    </p>
+                    <a href="#" class="read-more">read more</a>
+                </div>
+                <div class="photo-item tall">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 25</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 26</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 100 -->
+        <section class="day-section" data-day="100">
+            <div class="photo-grid">
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 27</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);">
+                        <span class="photo-hint">Photo 28</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);">
+                        <span class="photo-hint">Photo 29</span>
+                    </div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo placeholder" style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);">
+                        <span class="photo-hint">Photo 30</span>
+                    </div>
+                </div>
+            </div>
+            <div class="final-message">
+                <h2>100 DAYS</h2>
+                <p>The journey of recovery</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

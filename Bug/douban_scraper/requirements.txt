@@ -1,0 +1,23 @@
+# 豆瓣电影评论爬虫依赖
+
+# 浏览器自动化 - 绕过反爬虫
+selenium>=4.15.0
+undetected-chromedriver>=3.5.0
+
+# HTML解析
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# 数据处理
+pandas>=2.0.0
+
+# 中文情感分析
+snownlp>=0.12.3
+
+# HTTP请求（备用）
+requests>=2.31.0
+
+# 工具
+fake-useragent>=1.4.0
+retrying>=1.3.4
+tqdm>=4.66.0

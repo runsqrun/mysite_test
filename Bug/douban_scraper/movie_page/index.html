@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一战再战 One Battle After Another - 豆瓣电影</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">
+                <span class="logo-icon">🎬</span>
+                <span class="logo-text">豆瓣电影</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">电影</a>
+                <a href="#">电视剧</a>
+                <a href="#">综艺</a>
+                <a href="#">读书</a>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="搜索电影、电视剧...">
+            </div>
+        </div>
+    </nav>
+
+    <!-- 电影头部信息 -->
+    <header class="movie-header">
+        <div class="header-bg"></div>
+        <div class="header-content">
+            <div class="movie-poster">
+                <img src="poster.jpg" alt="一战再战海报">
+            </div>
+            <div class="movie-info">
+                <h1 class="movie-title">一战再战 <span class="en-title">One Battle After Another</span></h1>
+                <div class="movie-meta">
+                    <span class="year">2025</span>
+                    <span class="separator">|</span>
+                    <span class="genres">剧情 / 动作 / 惊悚 / 犯罪</span>
+                    <span class="separator">|</span>
+                    <span class="duration">160分钟</span>
+                </div>
+                <div class="movie-credits">
+                    <p><strong>导演:</strong> 保罗·托马斯·安德森</p>
+                    <p><strong>主演:</strong> 莱昂纳多·迪卡普里奥 / 西恩·潘 / 本尼西奥·德尔·托罗 / 蔡斯·英菲尼迪</p>
+                    <p><strong>上映日期:</strong> 2025-10-17 (中国大陆)</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-primary">
+                        <span class="btn-icon">➕</span> 想看
+                    </button>
+                    <button class="btn-secondary">
+                        <span class="btn-icon">⭐</span> 看过
+                    </button>
+                </div>
+            </div>
+            <div class="rating-panel">
+                <div class="rating-score">
+                    <div class="score-circle positive">
+                        <span class="score-number">8.1</span>
+                    </div>
+                    <span class="score-label">豆瓣评分</span>
+                </div>
+                <div class="rating-stats">
+                    <span class="votes-count">188,022 人评价</span>
+                    <div class="audience-score">
+                        <div class="score-icon">🍿</div>
+                        <div class="score-info">
+                            <span class="percentage">80%</span>
+                            <span class="label">观众喜欢</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="content-left">
+            <!-- 剧情简介 -->
+            <section class="section summary-section">
+                <h2 class="section-title">剧情简介</h2>
+                <p class="summary-text">
+                    落魄潦倒的革命者鲍勃（莱昂纳多·迪卡普里奥 饰）终日生活在草木皆兵的偏执状态，他与世隔绝，只和坚韧自立的女儿薇拉（蔡斯·英菲尼迪 饰）相依为命。然而，当鲍勃的宿敌（西恩·潘 饰）在16年后再度现身，女儿也突然失踪，这位曾经的激进分子仓促踏上了寻女之路，父女二人不得不直面他过往行为种下的恶果……
+                </p>
+            </section>
+
+            <!-- 评分统计 -->
+            <section class="section stats-section">
+                <h2 class="section-title">评分统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">📊</span>
+                            <span class="stat-title">评论总数</span>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-row">
+                                <span>短评</span>
+                                <span class="stat-value">80 条</span>
+                            </div>
+                            <div class="stat-row">
+                                <span>长评</span>
+                                <span class="stat-value">60 条</span>
+                            </div>
+                            <div class="stat-row total">
+                                <span>合计</span>
+                                <span class="stat-value">140 条</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">⭐</span>
+                            <span class="stat-title">评分分布</span>
+                        </div>
+                        <div class="rating-bars">
+                            <div class="rating-bar-row">
+                                <span class="star-label">5星</span>
+                                <div class="bar-container">
+                                    <div class="bar positive" style="width: 25%"></div>
+                                </div>
+                                <span class="bar-value">25.0%</span>
+                            </div>
+                            <div class="rating-bar-row">
+                                <span class="star-label">4星</span>
+                                <div class="bar-container">
+                                    <div class="bar positive" style="width: 35%"></div>
+                                </div>
+                                <span class="bar-value">35.0%</span>
+                            </div>
+                            <div class="rating-bar-row">
+                                <span class="star-label">3星</span>
+                                <div class="bar-container">
+                                    <div class="bar neutral" style="width: 21.2%"></div>
+                                </div>
+                                <span class="bar-value">21.2%</span>
+                            </div>
+                            <div class="rating-bar-row">
+                                <span class="star-label">2星</span>
+                                <div class="bar-container">
+                                    <div class="bar negative" style="width: 8.8%"></div>
+                                </div>
+                                <span class="bar-value">8.8%</span>
+                            </div>
+                            <div class="rating-bar-row">
+                                <span class="star-label">1星</span>
+                                <div class="bar-container">
+                                    <div class="bar negative" style="width: 10%"></div>
+                                </div>
+                                <span class="bar-value">10.0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-icon">😊</span>
+                            <span class="stat-title">情感分析</span>
+                        </div>
+                        <div class="sentiment-chart">
+                            <div class="sentiment-row">
+                                <span class="sentiment-label positive">😊 正面</span>
+                                <div class="sentiment-bar-container">
+                                    <div class="sentiment-bar positive" style="width: 80%"></div>
+                                </div>
+                                <span class="sentiment-value">80.0%</span>
+                            </div>
+                            <div class="sentiment-row">
+                                <span class="sentiment-label neutral">😐 中性</span>
+                                <div class="sentiment-bar-container">
+                                    <div class="sentiment-bar neutral" style="width: 5%"></div>
+                                </div>
+                                <span class="sentiment-value">5.0%</span>
+                            </div>
+                            <div class="sentiment-row">
+                                <span class="sentiment-label negative">😢 负面</span>
+                                <div class="sentiment-bar-container">
+                                    <div class="sentiment-bar negative" style="width: 15%"></div>
+                                </div>
+                                <span class="sentiment-value">15.0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 热门关键词 -->
+            <section class="section keywords-section">
+                <h2 class="section-title">🔑 热门关键词</h2>
+                <div class="keywords-cloud">
+                    <span class="keyword large">革命</span>
+                    <span class="keyword large">PTA</span>
+                    <span class="keyword medium">电影</span>
+                    <span class="keyword medium">白</span>
+                    <span class="keyword medium">男</span>
+                    <span class="keyword small">一个</span>
+                    <span class="keyword small">拍</span>
+                    <span class="keyword medium">美国</span>
+                    <span class="keyword small">政治</span>
+                    <span class="keyword medium">小李子</span>
+                </div>
+            </section>
+
+            <!-- 评论导航标签 -->
+            <section class="section reviews-section">
+                <div class="tabs">
+                    <button class="tab active" data-tab="positive">好评 (48)</button>
+                    <button class="tab" data-tab="neutral">中评 (17)</button>
+                    <button class="tab" data-tab="negative">差评 (15)</button>
+                </div>
+
+                <!-- 好评 -->
+                <div class="tab-content active" id="positive">
+                    <div class="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">罐</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">罐罐</span>
+                                        <span class="review-date">2025-10-19</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating positive">
+                                    <span class="rating-stars">★★★★★</span>
+                                    <span class="rating-text">力荐</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                拥有一切让姜文梦寐以求的元素，当代史、革命、找爹、密集台词、华丽色彩、灰色幽默、四字电影名以及美丽的屁股，鉴定为是姜文在梦里才能拍出来的电影
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 6181 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">低</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">低**人口</span>
+                                        <span class="review-date">2025-09-26</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating positive">
+                                    <span class="rating-stars">★★★★★</span>
+                                    <span class="rating-text">力荐</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                去TM的政治议题，你们难道不知道什么样的电影，什么样的调度，什么样的故事设计是好看的吗？
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 3504 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">双</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">双月鲲鹏</span>
+                                        <span class="review-date">2025-10-18</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating positive">
+                                    <span class="rating-stars">★★★★★</span>
+                                    <span class="rating-text">力荐</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                天天闹着要激进革命的人，手上干的活就是放火打劫，反手就是卖光所有队友。嘴上说着种族主义和清除非法移民的人，身体却很诚实地背叛了立场。与其大张旗鼓搞身份政治，还不如糊里糊涂安心度日，对不上暗号就对不上暗号吧，谁在乎那些破玩意，过着抱孩子暖炕的生活直接开摆才重要，不然连死都不知道怎么死的。
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 2760 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">同</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">同志亦凡人中文站</span>
+                                        <span class="review-date">2025-09-24</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating positive">
+                                    <span class="rating-stars">★★★★☆</span>
+                                    <span class="rating-text">推荐</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                160分钟完全不够看，PTA这是奔着电视剧去拍的啊！极化时代的黑色喜剧，三分狗血七分荒诞，极左极右一战再战。剧情蛇形走位，虽说是商业片，却有很多反高潮反套路的作者巧思。再多点打戏我可以当你是武侠片...
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 1867 人觉得有用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中评 -->
+                <div class="tab-content" id="neutral">
+                    <div class="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">阿</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">阿莫多瓦特了</span>
+                                        <span class="review-date">2025-09-24</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating neutral">
+                                    <span class="rating-stars">★★★☆☆</span>
+                                    <span class="rating-text">还行</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                当然是反川普、反政府主义，甚至是反美国的，但是美国人一思考，上帝就发笑。用极端白人种族主义、游击队和犬儒的吃喝玩乐，似乎就是对保守但话语权愈加扩大的右派、激进但无能入局逐渐溃败的左派、持续观望混吃等死...
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 1673 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">舌</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">舌在足矣</span>
+                                        <span class="review-date">2025-09-28</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating neutral">
+                                    <span class="rating-stars">★★★☆☆</span>
+                                    <span class="rating-text">还行</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                本片证明了PTA对大场面的驾驭能力，尤其是最后一场追车戏，以超低的贴地机位将起伏的公路拍得波涛汹涌，宛如陆地行舟。但作为PTA少有的情节而非人物驱动的剧本，无论是革命分子还是种族主义者都扁平得如卡通人...
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 1321 人觉得有用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 差评 -->
+                <div class="tab-content" id="negative">
+                    <div class="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">匿</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">匿名用户</span>
+                                        <span class="review-date">2025-10-20</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating negative">
+                                    <span class="rating-stars">★★☆☆☆</span>
+                                    <span class="rating-text">较差</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                你们夸啥呢？这片子要是国产片，不就是一坨么？
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 695 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">匿</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">匿名用户</span>
+                                        <span class="review-date">2025-10-15</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating negative">
+                                    <span class="rating-stars">★☆☆☆☆</span>
+                                    <span class="rating-text">很差</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                是我文化水平太低看不懂吗？为什么我觉得这个片就是彻头彻尾的无聊加不明所以加低级的黑色幽默加用大量的乐器声音掩盖导演不会把握节奏的事实呢？说实话要不是小李子和男二的精彩演技，我中途就离场了。
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 534 人觉得有用</span>
+                            </div>
+                        </div>
+
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="avatar">匿</div>
+                                    <div class="reviewer-details">
+                                        <span class="reviewer-name">匿名用户</span>
+                                        <span class="review-date">2025-10-18</span>
+                                    </div>
+                                </div>
+                                <div class="review-rating negative">
+                                    <span class="rating-stars">★★☆☆☆</span>
+                                    <span class="rating-text">较差</span>
+                                </div>
+                            </div>
+                            <p class="review-content">
+                                真的是不知所云，还花了我六欧
+                            </p>
+                            <div class="review-footer">
+                                <span class="helpful-count">👍 312 人觉得有用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="view-more-btn">查看更多评论</button>
+            </section>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">热度统计</h3>
+                <div class="hot-stats">
+                    <div class="hot-stat-item">
+                        <span class="hot-label">最高有用数</span>
+                        <span class="hot-value">6,181</span>
+                    </div>
+                    <div class="hot-stat-item">
+                        <span class="hot-label">平均有用数</span>
+                        <span class="hot-value">685.9</span>
+                    </div>
+                    <div class="hot-stat-item">
+                        <span class="hot-label">有用数>100</span>
+                        <span class="hot-value">61 条</span>
+                    </div>
+                    <div class="hot-stat-item">
+                        <span class="hot-label">有用数>1000</span>
+                        <span class="hot-value">13 条</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">演职员表</h3>
+                <div class="cast-list">
+                    <div class="cast-item">
+                        <div class="cast-avatar">🎬</div>
+                        <div class="cast-info">
+                            <span class="cast-name">保罗·托马斯·安德森</span>
+                            <span class="cast-role">导演</span>
+                        </div>
+                    </div>
+                    <div class="cast-item">
+                        <div class="cast-avatar">🎭</div>
+                        <div class="cast-info">
+                            <span class="cast-name">莱昂纳多·迪卡普里奥</span>
+                            <span class="cast-role">主演</span>
+                        </div>
+                    </div>
+                    <div class="cast-item">
+                        <div class="cast-avatar">🎭</div>
+                        <div class="cast-info">
+                            <span class="cast-name">西恩·潘</span>
+                            <span class="cast-role">主演</span>
+                        </div>
+                    </div>
+                    <div class="cast-item">
+                        <div class="cast-avatar">🎭</div>
+                        <div class="cast-info">
+                            <span class="cast-name">本尼西奥·德尔·托罗</span>
+                            <span class="cast-role">主演</span>
+                        </div>
+                    </div>
+                    <div class="cast-item">
+                        <div class="cast-avatar">🎭</div>
+                        <div class="cast-info">
+                            <span class="cast-name">蔡斯·英菲尼迪</span>
+                            <span class="cast-role">主演</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">相关推荐</h3>
+                <div class="recommend-list">
+                    <a href="#" class="recommend-item">
+                        <span class="recommend-icon">🎬</span>
+                        <span class="recommend-title">血色将至</span>
+                        <span class="recommend-score">8.2</span>
+                    </a>
+                    <a href="#" class="recommend-item">
+                        <span class="recommend-icon">🎬</span>
+                        <span class="recommend-title">木兰花</span>
+                        <span class="recommend-score">8.0</span>
+                    </a>
+                    <a href="#" class="recommend-item">
+                        <span class="recommend-icon">🎬</span>
+                        <span class="recommend-title">私恋失调</span>
+                        <span class="recommend-score">7.8</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>数据来源：豆瓣电影 | 爬取时间：2026-01-21 | 共收集 140 条评论</p>
+            <p>© 2026 电影评论分析工具 - 仅供学习研究使用</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="备忘录">
+    <meta name="theme-color" content="#FFC107">
+    <meta name="msapplication-navbutton-color" content="#FFC107">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23FFC107' width='180' height='180' rx='32'/><rect fill='white' x='40' y='40' width='100' height='100' rx='12'/><rect fill='%23FFC107' x='40' y='40' width='8' height='100' rx='4'/></svg>">
+    <title>备忘录</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 手机模拟框架 -->
+    <div class="phone-frame">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span class="time">11:06</span>
+            <div class="status-icons">
+                <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.5c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10z" opacity="0.3"/>
+                    <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/>
+                </svg>
+                <svg class="status-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/>
+                </svg>
+                <span class="battery-text">89</span>
+            </div>
+        </div>
+
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <button class="icon-btn menu-btn" aria-label="菜单">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="15" y2="12"></line>
+                    <line x1="3" y1="18" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            
+            <!-- 标签切换 -->
+            <div class="tabs">
+                <button class="tab active" data-tab="notes">备忘</button>
+                <button class="tab" data-tab="todos">待办</button>
+            </div>
+            
+            <button class="icon-btn more-btn" aria-label="更多">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <circle cx="12" cy="19" r="2"></circle>
+                </svg>
+            </button>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 标题区 -->
+            <div class="title-section">
+                <h1 class="page-title">全部备忘</h1>
+                <p class="note-count"><span id="noteCount">0</span> 条备忘</p>
+            </div>
+
+            <!-- 编辑模式工具栏 -->
+            <div class="edit-mode-toolbar hidden" id="editModeToolbar">
+                <div class="edit-mode-info">
+                    <span id="selectedCount">0</span> 项已选中
+                </div>
+                <div class="edit-mode-actions">
+                    <button class="edit-action-btn select-all-btn" id="selectAllBtn">全选</button>
+                    <button class="edit-action-btn delete-selected-btn" id="deleteSelectedBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        删除
+                    </button>
+                    <button class="edit-action-btn cancel-edit-btn" id="cancelEditBtn">取消</button>
+                </div>
+            </div>
+
+            <!-- 搜索栏 -->
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" placeholder="搜索" class="search-input">
+            </div>
+
+            <!-- 笔记列表 -->
+            <div class="notes-list" id="notesList">
+                <!-- 笔记卡片将由 JavaScript 动态生成 -->
+            </div>
+
+            <!-- 待办列表（默认隐藏） -->
+            <div class="todos-list hidden" id="todosList">
+                <div class="empty-state">
+                    <p>暂无待办事项</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 浮动添加按钮 -->
+        <button class="fab" id="addNoteBtn" aria-label="添加笔记">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 编辑笔记模态框 -->
+    <div class="modal-overlay hidden" id="noteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="icon-btn back-btn" id="closeModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <div class="modal-actions">
+                    <button class="icon-btn star-btn" id="toggleStar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="icon-btn delete-btn" id="deleteNote">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                    <button class="save-btn" id="saveNote">保存</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="noteTitle" class="note-title-input" placeholder="标题">
+                <textarea id="noteContent" class="note-content-input" placeholder="开始输入..."></textarea>
+                
+                <!-- 图片预览区 -->
+                <div class="image-preview-container" id="imagePreviewContainer"></div>
+                
+                <!-- 图片上传按钮 -->
+                <div class="image-upload-section">
+                    <input type="file" id="imageInput" accept="image/*" multiple hidden>
+                    <button type="button" class="upload-image-btn" id="uploadImageBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        添加图片
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" id="noteId">
+        </div>
+    </div>
+
+    <!-- 侧边菜单 -->
+    <div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+    <div class="sidebar hidden" id="sidebar">
+        <div class="sidebar-header">
+            <h2>备忘录</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                全部备忘
+            </a>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                收藏
+            </a>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                回收站
+            </a>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
