@@ -1,6 +1,7 @@
 // 备忘录应用 - 主脚本
 document.addEventListener('DOMContentLoaded', () => {
     // DOM 元素
+    const phoneFrame = document.querySelector('.phone-frame');
     const notesList = document.getElementById('notesList');
     const todosList = document.getElementById('todosList');
     const noteCount = document.getElementById('noteCount');
@@ -616,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isEditMode = true;
         editModeToolbar.classList.remove('hidden');
         addNoteBtn.style.display = 'none';
+        if (phoneFrame) phoneFrame.classList.add('is-edit-mode');
         renderNotes();
     }
     
@@ -625,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedNotes.clear();
         editModeToolbar.classList.add('hidden');
         addNoteBtn.style.display = 'flex';
+        if (phoneFrame) phoneFrame.classList.remove('is-edit-mode');
         renderNotes();
     }
     

@@ -87,24 +87,6 @@
                 <p class="note-count"><span id="noteCount">0</span> 条备忘</p>
             </div>
 
-            <!-- 编辑模式工具栏 -->
-            <div class="edit-mode-toolbar hidden" id="editModeToolbar">
-                <div class="edit-mode-info">
-                    <span id="selectedCount">0</span> 项已选中
-                </div>
-                <div class="edit-mode-actions">
-                    <button class="edit-action-btn select-all-btn" id="selectAllBtn">全选</button>
-                    <button class="edit-action-btn delete-selected-btn" id="deleteSelectedBtn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        删除
-                    </button>
-                    <button class="edit-action-btn cancel-edit-btn" id="cancelEditBtn">取消</button>
-                </div>
-            </div>
-
             <!-- 搜索栏 -->
             <div class="search-bar">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -126,6 +108,24 @@
                 </div>
             </div>
         </main>
+
+        <!-- 编辑模式工具栏（悬浮于底部，不占据布局空间） -->
+        <div class="edit-mode-toolbar hidden" id="editModeToolbar">
+            <div class="edit-mode-info">
+                <span id="selectedCount">0</span> 项已选中
+            </div>
+            <div class="edit-mode-actions">
+                <button class="edit-action-btn select-all-btn" id="selectAllBtn">全选</button>
+                <button class="edit-action-btn delete-selected-btn" id="deleteSelectedBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    删除
+                </button>
+                <button class="edit-action-btn cancel-edit-btn" id="cancelEditBtn">取消</button>
+            </div>
+        </div>
 
         <!-- 浮动添加按钮 -->
         <button class="fab" id="addNoteBtn" aria-label="添加笔记">
