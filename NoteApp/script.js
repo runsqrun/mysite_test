@@ -887,29 +887,34 @@ document.addEventListener('DOMContentLoaded', () => {
         
         psCarousel.style.transition = animate ? 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
         psCarousel.style.transform = `translateX(-${offset}px)`;
-        
-        // 更新索引显示
-        psCurrentIndex.textContent = currentCardIndex + 1;
-        
-        // 更新指示器
-        document.querySelectorAll('.ps-indicator').forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentCardIndex);
-        });
     }
     
     // 更新卡片状态
     function updateCardStates() {
+        updateCardStatesVisual(currentCardIndex);
+    }
+    
+    // 根据指定索引更新卡片视觉状态
+    function updateCardStatesVisual(activeIndex) {
         document.querySelectorAll('.ps-card').forEach((card, index) => {
             card.classList.remove('active', 'prev', 'next');
             
-            if (index === currentCardIndex) {
+            if (index === activeIndex) {
                 card.classList.add('active');
-            } else if (index === currentCardIndex - 1) {
+            } else if (index === activeIndex - 1) {
                 card.classList.add('prev');
-            } else if (index === currentCardIndex + 1) {
+            } else if (index === activeIndex + 1) {
                 card.classList.add('next');
             }
         });
+        
+        // 更新指示器
+        document.querySelectorAll('.ps-indicator').forEach((indicator, index) => {
+            indicator.classList.toggle('active', index === activeIndex);
+        });
+        
+        // 更新索引显示
+        psCurrentIndex.textContent = activeIndex + 1;
     }
     
     // 绑定轮播事件 - 在整个wrapper区域
@@ -940,6 +945,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             carousel.style.transition = 'none';
             carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;
+            
+            // 实时更新卡片状态 - 根据滑动距离计算当前应该高亮的卡片
+            const draggedCards = Math.round(-carouselCurrentX / (cardWidth + gap));
+            const visualIndex = Math.max(0, Math.min(notes.length - 1, currentCardIndex + draggedCards));
+            updateCardStatesVisual(visualIndex);
         };
         
         const onEnd = (e) => {
