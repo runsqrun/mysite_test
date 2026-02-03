@@ -763,4 +763,236 @@ document.addEventListener('DOMContentLoaded', () => {
             renderNotes();
         }
     }
+    
+    // ==================== 下拉菜单功能 ====================
+    
+    const moreBtn = document.getElementById('moreBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const personalSpaceBtn = document.getElementById('personalSpaceBtn');
+    const personalSpaceOverlay = document.getElementById('personalSpaceOverlay');
+    const closePersonalSpace = document.getElementById('closePersonalSpace');
+    const cardStack = document.getElementById('cardStack');
+    const cardIndicators = document.getElementById('cardIndicators');
+    const swipeLeftBtn = document.getElementById('swipeLeftBtn');
+    const swipeRightBtn = document.getElementById('swipeRightBtn');
+    const editCurrentCardBtn = document.getElementById('editCurrentCardBtn');
+    
+    let currentCardIndex = 0;
+    let swipeCards = [];
+    
+    // 切换下拉菜单
+    moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('hidden');
+    });
+    
+    // 点击其他地方关闭菜单
+    document.addEventListener('click', (e) => {
+        if (!dropdownMenu.contains(e.target) && e.target !== moreBtn) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+    
+    // 打开个人空间
+    personalSpaceBtn.addEventListener('click', () => {
+        dropdownMenu.classList.add('hidden');
+        openPersonalSpace();
+    });
+    
+    // 关闭个人空间
+    closePersonalSpace.addEventListener('click', () => {
+        closePersonalSpaceHandler();
+    });
+    
+    personalSpaceOverlay.addEventListener('click', (e) => {
+        if (e.target === personalSpaceOverlay) {
+            closePersonalSpaceHandler();
+        }
+    });
+    
+    function openPersonalSpace() {
+        personalSpaceOverlay.classList.remove('hidden');
+        currentCardIndex = 0;
+        renderCardStack();
+    }
+    
+    function closePersonalSpaceHandler() {
+        personalSpaceOverlay.classList.add('hidden');
+    }
+    
+    // 渲染卡片堆
+    function renderCardStack() {
+        if (notes.length === 0) {
+            cardStack.innerHTML = `
+                <div class="card-stack-empty">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <p>暂无备忘</p>
+                </div>
+            `;
+            cardIndicators.innerHTML = '';
+            return;
+        }
+        
+        // 只渲染当前及后面的卡片（最多3张）
+        const cardsToShow = notes.slice(currentCardIndex, currentCardIndex + 3);
+        
+        cardStack.innerHTML = cardsToShow.map((note, index) => createSwipeCard(note, index)).join('');
+        
+        // 渲染指示器
+        cardIndicators.innerHTML = notes.map((_, index) => 
+            `<div class="card-indicator ${index === currentCardIndex ? 'active' : ''}"></div>`
+        ).join('');
+        
+        // 绑定卡片拖拽事件
+        swipeCards = document.querySelectorAll('.swipe-card');
+        if (swipeCards.length > 0) {
+            bindSwipeEvents(swipeCards[0]);
+        }
+    }
+    
+    // 创建滑动卡片HTML
+    function createSwipeCard(note, stackIndex) {
+        const starHtml = note.starred ? '<span class="swipe-card-star">★</span>' : '';
+        
+        let imagesHtml = '';
+        if (note.images && note.images.length > 0) {
+            imagesHtml = `
+                <div class="swipe-card-images">
+                    ${note.images.map(img => `<img src="${img}" alt="">`).join('')}
+                </div>
+            `;
+        } else if (note.thumbnail) {
+            imagesHtml = `
+                <div class="swipe-card-images">
+                    <img src="${note.thumbnail}" alt="">
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="swipe-card" data-id="${note.id}" data-index="${stackIndex}">
+                <div class="swipe-indicator like">喜欢</div>
+                <div class="swipe-indicator nope">跳过</div>
+                <div class="swipe-card-header">
+                    <h3 class="swipe-card-title">${escapeHtml(note.title) || '无标题'}</h3>
+                    ${starHtml}
+                </div>
+                <div class="swipe-card-date">${note.date}</div>
+                <div class="swipe-card-content">${escapeHtml(note.content) || '无内容'}</div>
+                ${imagesHtml}
+            </div>
+        `;
+    }
+    
+    // 绑定滑动事件
+    function bindSwipeEvents(card) {
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let isDragging = false;
+        
+        const onStart = (e) => {
+            isDragging = true;
+            card.classList.add('dragging');
+            const point = e.touches ? e.touches[0] : e;
+            startX = point.clientX;
+            startY = point.clientY;
+        };
+        
+        const onMove = (e) => {
+            if (!isDragging) return;
+            
+            const point = e.touches ? e.touches[0] : e;
+            currentX = point.clientX - startX;
+            const currentY = point.clientY - startY;
+            
+            // 旋转角度
+            const rotate = currentX * 0.1;
+            
+            card.style.transform = `translateX(${currentX}px) translateY(${currentY * 0.3}px) rotate(${rotate}deg)`;
+            
+            // 显示滑动指示
+            const likeIndicator = card.querySelector('.swipe-indicator.like');
+            const nopeIndicator = card.querySelector('.swipe-indicator.nope');
+            
+            if (currentX > 50) {
+                likeIndicator.style.opacity = Math.min((currentX - 50) / 100, 1);
+                nopeIndicator.style.opacity = 0;
+            } else if (currentX < -50) {
+                nopeIndicator.style.opacity = Math.min((-currentX - 50) / 100, 1);
+                likeIndicator.style.opacity = 0;
+            } else {
+                likeIndicator.style.opacity = 0;
+                nopeIndicator.style.opacity = 0;
+            }
+        };
+        
+        const onEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            card.classList.remove('dragging');
+            
+            const threshold = 100;
+            
+            if (currentX > threshold) {
+                // 向右滑 - 喜欢
+                swipeCard('right');
+            } else if (currentX < -threshold) {
+                // 向左滑 - 跳过
+                swipeCard('left');
+            } else {
+                // 回弹
+                card.style.transform = '';
+                card.querySelector('.swipe-indicator.like').style.opacity = 0;
+                card.querySelector('.swipe-indicator.nope').style.opacity = 0;
+            }
+            
+            currentX = 0;
+        };
+        
+        // 鼠标事件
+        card.addEventListener('mousedown', onStart);
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        
+        // 触摸事件
+        card.addEventListener('touchstart', onStart, { passive: true });
+        card.addEventListener('touchmove', onMove, { passive: true });
+        card.addEventListener('touchend', onEnd);
+    }
+    
+    // 滑动卡片
+    function swipeCard(direction) {
+        const card = swipeCards[0];
+        if (!card) return;
+        
+        const flyOut = direction === 'right' ? 500 : -500;
+        
+        card.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+        card.style.transform = `translateX(${flyOut}px) rotate(${direction === 'right' ? 30 : -30}deg)`;
+        card.style.opacity = '0';
+        
+        setTimeout(() => {
+            currentCardIndex++;
+            if (currentCardIndex >= notes.length) {
+                currentCardIndex = 0; // 循环
+            }
+            renderCardStack();
+        }, 300);
+    }
+    
+    // 底部按钮
+    swipeLeftBtn.addEventListener('click', () => swipeCard('left'));
+    swipeRightBtn.addEventListener('click', () => swipeCard('right'));
+    
+    editCurrentCardBtn.addEventListener('click', () => {
+        if (notes.length > 0 && currentCardIndex < notes.length) {
+            const noteId = notes[currentCardIndex].id;
+            closePersonalSpaceHandler();
+            setTimeout(() => openModal(noteId), 300);
+        }
+    });
 });

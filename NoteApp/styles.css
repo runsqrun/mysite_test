@@ -973,3 +973,397 @@ body {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(0.98); }
 }
+
+/* ==================== 下拉菜单样式 ==================== */
+.more-menu-wrapper {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 8px;
+    min-width: 160px;
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    z-index: 1000;
+    animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 193, 7, 0.15);
+}
+
+.dropdown-item:active {
+    background: rgba(255, 193, 7, 0.25);
+    transform: scale(0.98);
+}
+
+.dropdown-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+}
+
+/* ==================== 个人空间样式 ==================== */
+.personal-space-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.personal-space {
+    width: 100%;
+    max-width: 400px;
+    height: 844px;
+    max-height: 95vh;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    border-radius: 40px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.personal-space-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    padding-top: 50px;
+}
+
+.personal-space-header .icon-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.personal-space-header .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.personal-space-header .icon-btn svg {
+    color: white;
+}
+
+.personal-space-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 卡片堆叠容器 */
+.card-stack-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-stack {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    height: 450px;
+    perspective: 1000px;
+}
+
+/* Tinder风格大卡片 */
+.swipe-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    cursor: grab;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+.swipe-card.dragging {
+    transition: none;
+}
+
+/* 卡片堆叠效果 */
+.swipe-card:nth-child(2) {
+    transform: scale(0.95) translateY(10px);
+    opacity: 0.7;
+}
+
+.swipe-card:nth-child(3) {
+    transform: scale(0.9) translateY(20px);
+    opacity: 0.4;
+}
+
+.swipe-card:nth-child(n+4) {
+    transform: scale(0.85) translateY(30px);
+    opacity: 0;
+}
+
+/* 卡片内容 */
+.swipe-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.swipe-card-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.swipe-card-star {
+    color: var(--star-color);
+    font-size: 24px;
+    margin-left: 12px;
+}
+
+.swipe-card-date {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.swipe-card-content {
+    flex: 1;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    overflow-y: auto;
+}
+
+.swipe-card-images {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.swipe-card-images img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* 滑动方向指示 */
+.swipe-card .swipe-indicator {
+    position: absolute;
+    top: 20px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.swipe-card .swipe-indicator.like {
+    right: 20px;
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    transform: rotate(15deg);
+}
+
+.swipe-card .swipe-indicator.nope {
+    left: 20px;
+    background: rgba(244, 67, 54, 0.9);
+    color: white;
+    transform: rotate(-15deg);
+}
+
+/* 卡片指示器 */
+.card-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.card-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.card-indicator.active {
+    width: 24px;
+    border-radius: 4px;
+    background: white;
+}
+
+/* 底部操作按钮 */
+.personal-space-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    padding-bottom: 40px;
+}
+
+.action-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn svg {
+    width: 28px;
+    height: 28px;
+}
+
+.action-btn.dislike-btn {
+    background: white;
+}
+
+.action-btn.dislike-btn svg {
+    color: #F44336;
+}
+
+.action-btn.dislike-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(244, 67, 54, 0.4);
+}
+
+.action-btn.edit-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.action-btn.edit-btn svg {
+    width: 22px;
+    height: 22px;
+    color: white;
+}
+
+.action-btn.edit-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.action-btn.like-btn {
+    background: linear-gradient(135deg, #4CAF50, #8BC34A);
+}
+
+.action-btn.like-btn svg {
+    color: white;
+}
+
+.action-btn.like-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(76, 175, 80, 0.5);
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* 空状态 */
+.card-stack-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: white;
+    text-align: center;
+}
+
+.card-stack-empty svg {
+    width: 80px;
+    height: 80px;
+    opacity: 0.6;
+    margin-bottom: 16px;
+}
+
+.card-stack-empty p {
+    font-size: 18px;
+    opacity: 0.8;
+}
