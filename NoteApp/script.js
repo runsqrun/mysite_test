@@ -601,14 +601,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let isTouchDragging = false;
     let touchDraggedCard = null;
     let touchPlaceholder = null;
+    let touchMoved = false;
+    let touchLongPressed = false;
     
     function handleTouchStart(e, card) {
         const touch = e.touches[0];
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
+        touchMoved = false;
+        touchLongPressed = false;
         
         // 长按检测
         longPressTimer = setTimeout(() => {
+            touchLongPressed = true;
             if (!isEditMode) {
                 card.classList.add('long-press-hint');
                 enterEditMode();
@@ -632,6 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 如果移动距离超过阈值，取消长按
         if (!isTouchDragging && (deltaX > 10 || deltaY > 10)) {
+            touchMoved = true;
             handleLongPressEnd();
         }
         
@@ -655,6 +661,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             const id = parseInt(card.dataset.id);
             toggleNoteSelection(id, card);
+        } else {
+            // 非编辑模式：轻点打开详情（移动端 click 可能被屏蔽/不稳定）
+            if (!touchMoved && !touchLongPressed) {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = parseInt(card.dataset.id);
+                openModal(id);
+            }
         }
     }
     
@@ -801,11 +815,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDraggingCarousel = false;
 
     function getPsCarouselMetrics() {
-        const firstCard = psCarousel?.querySelector('.ps-card');
-        const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 300;
+        const cards = psCarousel ? Array.from(psCarousel.querySelectorAll('.ps-card')) : [];
+        const firstCard = cards[0];
 
+        // 用 layout 尺寸（offsetWidth/offsetLeft）避免 transform(scale) 影响居中计算
+        const cardWidth = firstCard ? firstCard.offsetWidth : 300;
         let gap = 16;
-        if (psCarousel) {
+
+        if (cards.length >= 2) {
+            const second = cards[1];
+            const measured = second.offsetLeft - firstCard.offsetLeft - cardWidth;
+            if (Number.isFinite(measured) && measured >= 0) gap = measured;
+        } else if (psCarousel) {
             const styles = getComputedStyle(psCarousel);
             const gapRaw = styles.columnGap || styles.gap;
             const parsed = parseFloat(gapRaw);
