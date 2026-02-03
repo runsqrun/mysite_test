@@ -98,6 +98,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // 详情页打开来源
     let modalOpenedFromPersonalSpace = false;
 
+    // 记录最近一次交互点，用于打开详情的“扩散”动效
+    let lastInteractionPoint = {
+        x: Math.round(window.innerWidth / 2),
+        y: Math.round(window.innerHeight / 2)
+    };
+
+    const recordPoint = (x, y) => {
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        lastInteractionPoint = { x, y };
+    };
+
+    document.addEventListener('pointerdown', (e) => {
+        recordPoint(e.clientX, e.clientY);
+    }, { passive: true, capture: true });
+
+    document.addEventListener('touchstart', (e) => {
+        const t = e.touches && e.touches[0];
+        if (t) recordPoint(t.clientX, t.clientY);
+    }, { passive: true, capture: true });
+
+    function playModalReveal() {
+        // modal 还没展示时，才能拿到 overlay 的布局
+        const overlay = noteModal;
+        if (!overlay) return;
+
+        let reveal = overlay.querySelector('.modal-reveal');
+        if (!reveal) {
+            reveal = document.createElement('div');
+            reveal.className = 'modal-reveal';
+            overlay.insertBefore(reveal, overlay.firstChild);
+        }
+
+        const x = lastInteractionPoint.x;
+        const y = lastInteractionPoint.y;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const maxDx = Math.max(x, vw - x);
+        const maxDy = Math.max(y, vh - y);
+        const maxRadius = Math.hypot(maxDx, maxDy);
+        const base = 24;
+        const scale = Math.max(1, Math.ceil((maxRadius * 2) / base));
+
+        overlay.style.setProperty('--reveal-x', `${x}px`);
+        overlay.style.setProperty('--reveal-y', `${y}px`);
+        overlay.style.setProperty('--reveal-scale', String(scale));
+
+        // 重置并触发 opening 动画
+        overlay.classList.remove('opening');
+        void overlay.offsetWidth; // force reflow
+        overlay.classList.add('opening');
+
+        window.setTimeout(() => {
+            overlay.classList.remove('opening');
+        }, 560);
+    }
+
     // 初始化
     init();
 
@@ -272,8 +328,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 打开模态框
     function openModal(id = null) {
         if (isEditMode) return; // 编辑模式下不打开模态框
-        
+
         noteModal.classList.remove('hidden');
+        playModalReveal();
         currentImages = [];
         
         if (id) {
@@ -408,6 +465,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleStarHandler() {
         isStarred = !isStarred;
         updateStarButton();
+
+        // 星星抖动动效
+        toggleStar.classList.remove('star-anim');
+        void toggleStar.offsetWidth;
+        toggleStar.classList.add('star-anim');
+        window.setTimeout(() => toggleStar.classList.remove('star-anim'), 450);
     }
 
     // 更新收藏按钮状态
