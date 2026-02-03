@@ -1050,6 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 rafPending = true;
                 requestAnimationFrame(() => {
                     rafPending = false;
+                    if (!isDraggingCarousel) return;
                     const centeredIndex = getCenteredPsCardIndex();
                     if (Number.isInteger(centeredIndex)) {
                         updateCardStatesVisual(centeredIndex);
@@ -1062,6 +1063,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isDraggingCarousel) return;
             isDraggingCarousel = false;
             carousel.classList.remove('dragging');
+            rafPending = false;
 
             // 轻点（非拖拽）直接处理：点居中卡片打开详情，点其它卡片则先居中
             if (!didDrag) {
@@ -1128,6 +1130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isDraggingCarousel) {
                 isDraggingCarousel = false;
                 carousel.classList.remove('dragging');
+                rafPending = false;
                 const centeredIndex = getCenteredPsCardIndex();
                 if (Number.isInteger(centeredIndex)) {
                     currentCardIndex = centeredIndex;
