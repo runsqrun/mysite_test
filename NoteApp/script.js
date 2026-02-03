@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let longPressTimer = null;
     let draggedNote = null;
 
+    // 详情页打开来源
+    let modalOpenedFromPersonalSpace = false;
+
     // 初始化
     init();
 
@@ -311,6 +314,17 @@ document.addEventListener('DOMContentLoaded', () => {
         isStarred = false;
         currentImages = [];
         imagePreviewContainer.innerHTML = '';
+
+        // 如果详情页是从“个人空间”打开的，关闭后应回到个人空间
+        if (modalOpenedFromPersonalSpace) {
+            modalOpenedFromPersonalSpace = false;
+            try {
+                personalSpacePage.classList.remove('hidden');
+                updateCardStates(currentCardIndex);
+            } catch (_) {
+                // ignore
+            }
+        }
     }
 
     // 保存笔记
@@ -319,7 +333,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = noteContent.value.trim();
         const id = noteId.value;
 
-        const isPersonalSpaceVisible = typeof personalSpacePage !== 'undefined' && personalSpacePage && !personalSpacePage.classList.contains('hidden');
+        const isPersonalSpaceContext = (() => {
+            if (modalOpenedFromPersonalSpace) return true;
+            try {
+                return personalSpacePage && !personalSpacePage.classList.contains('hidden');
+            } catch (_) {
+                return false;
+            }
+        })();
 
         if (!title && !content && currentImages.length === 0) {
             closeModalHandler();
@@ -355,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModalHandler();
 
         // 如果详情是从“个人空间”打开的，则保持在个人空间；否则回到首页“全部备忘”
-        if (isPersonalSpaceVisible) {
+        if (isPersonalSpaceContext) {
             try {
                 renderCarousel();
             } catch (_) {
@@ -824,6 +845,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let carouselCurrentX = 0;
     let isDraggingCarousel = false;
 
+    function openModalFromPersonalSpace(noteId = null) {
+        modalOpenedFromPersonalSpace = true;
+        // 保持个人空间在背后，关闭详情即可返回
+        personalSpacePage.classList.remove('hidden');
+        openModal(noteId);
+    }
+
     function getPsCarouselMetrics() {
         const cards = psCarousel ? Array.from(psCarousel.querySelectorAll('.ps-card')) : [];
         const firstCard = cards[0];
@@ -872,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 个人空间内的添加按钮
     psAddNoteBtn.addEventListener('click', () => {
-        openModal();
+        openModalFromPersonalSpace();
     });
     
     function openPersonalSpace() {
@@ -1082,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (Number.isInteger(cardIndex)) {
                         if (cardIndex === currentCardIndex) {
                             const noteId = parseInt(card.dataset.id);
-                            openModal(noteId);
+                            openModalFromPersonalSpace(noteId);
                         } else {
                             currentCardIndex = Math.max(0, Math.min(notes.length - 1, cardIndex));
                             updateCarouselPosition(true);
@@ -1165,7 +1193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 如果点击的是当前active的卡片，进入详情页
             if (cardIndex === currentCardIndex) {
                 const noteId = parseInt(card.dataset.id);
-                openModal(noteId);
+                openModalFromPersonalSpace(noteId);
             } else {
                 // 点击其他卡片，滑动到那张卡片
                 currentCardIndex = cardIndex;
