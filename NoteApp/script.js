@@ -952,6 +952,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const carousel = psCarousel;
 
         let rafPending = false;
+        let didDrag = false;
+        let lastDragEndAt = 0;
         
         const onStart = (e) => {
             // 如果点击的是FAB按钮，不处理
@@ -962,6 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const point = e.touches ? e.touches[0] : e;
             carouselStartX = point.clientX;
             carouselCurrentX = 0;
+            didDrag = false;
         };
         
         const onMove = (e) => {
@@ -969,6 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const point = e.touches ? e.touches[0] : e;
             carouselCurrentX = point.clientX - carouselStartX;
+            if (!didDrag && Math.abs(carouselCurrentX) > 5) didDrag = true;
             
             const cardWidth = 300;
             const gap = 16;
@@ -994,29 +998,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isDraggingCarousel) return;
             isDraggingCarousel = false;
             carousel.classList.remove('dragging');
-            
-            const threshold = 60;
-            const cardWidth = 300;
-            const gap = 16;
-            
-            // 根据滑动距离计算应该停在哪张卡片
-            const draggedCards = Math.round(-carouselCurrentX / (cardWidth + gap));
-            let newIndex = currentCardIndex + draggedCards;
-            
-            // 确保在有效范围内
-            newIndex = Math.max(0, Math.min(notes.length - 1, newIndex));
-            
-            // 如果滑动距离不够，保持原位
-            if (Math.abs(carouselCurrentX) < threshold) {
-                newIndex = currentCardIndex;
+
+            // 松手后吸附到“视觉上最居中”的卡片
+            const centeredIndex = getCenteredPsCardIndex();
+            if (Number.isInteger(centeredIndex)) {
+                currentCardIndex = centeredIndex;
             }
-            
-            currentCardIndex = newIndex;
-            
+
             updateCarouselPosition(true);
             updateCardStates();
-            
+
             carouselCurrentX = 0;
+            lastDragEndAt = Date.now();
         };
         
         // 绑定到wrapper而不是carousel
@@ -1034,13 +1027,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isDraggingCarousel) {
                 isDraggingCarousel = false;
                 carousel.classList.remove('dragging');
+                const centeredIndex = getCenteredPsCardIndex();
+                if (Number.isInteger(centeredIndex)) {
+                    currentCardIndex = centeredIndex;
+                }
                 updateCarouselPosition(true);
+                updateCardStates();
                 carouselCurrentX = 0;
+                lastDragEndAt = Date.now();
             }
         };
         
         // 卡片点击事件 - 使用click事件避免和拖拽冲突
         carousel.addEventListener('click', (e) => {
+            // 移动端拖拽松手会触发click，短时间内忽略避免误进详情
+            if (Date.now() - lastDragEndAt < 250) return;
+            if (didDrag) return;
+
             const card = e.target.closest('.ps-card');
             if (!card) return;
             
