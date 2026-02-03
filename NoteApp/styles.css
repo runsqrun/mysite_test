@@ -408,35 +408,16 @@ body {
     z-index: 3000;
     padding: 20px;
     overflow: hidden;
+    perspective: 1200px;
+    transform-style: preserve-3d;
 }
 
-.modal-reveal {
-    position: absolute;
-    left: var(--reveal-x, 50%);
-    top: var(--reveal-y, 50%);
-    width: 24px;
-    height: 24px;
-    border-radius: 999px;
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow:
-        0 20px 80px rgba(0, 0, 0, 0.18),
-        0 0 0 1px rgba(255, 255, 255, 0.6);
-    will-change: transform, opacity;
+.modal-overlay.modal-opening {
+    animation: overlayFadeIn 280ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-.modal-overlay.opening {
-    animation: modalOverlayFadeIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-.modal-overlay.opening .modal-reveal {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(var(--reveal-scale, 80));
-    transition:
-        transform 520ms cubic-bezier(0.2, 0.9, 0.2, 1),
-        opacity 520ms cubic-bezier(0.2, 0.9, 0.2, 1);
+.modal-overlay.modal-closing {
+    animation: overlayFadeOut 220ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
 .modal {
@@ -449,37 +430,54 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.3s ease;
+    animation: none;
+    will-change: transform, opacity;
+    transform-style: preserve-3d;
 }
 
-.modal-overlay.opening .modal {
-    animation: modalEnter 480ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+.modal-overlay.modal-opening .modal {
+    transform-origin: 100% 100%;
+    animation: pageFlipIn 520ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.modal-overlay.modal-closing .modal {
+    transform-origin: 0% 0%;
+    animation: pageFlipOut 420ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 
-@keyframes modalOverlayFadeIn {
+@keyframes overlayFadeIn {
     from { background-color: rgba(0, 0, 0, 0.0); }
     to { background-color: rgba(0, 0, 0, 0.5); }
 }
 
-@keyframes modalEnter {
-    from {
+@keyframes overlayFadeOut {
+    from { background-color: rgba(0, 0, 0, 0.5); }
+    to { background-color: rgba(0, 0, 0, 0.0); }
+}
+
+@keyframes pageFlipIn {
+    0% {
         opacity: 0;
-        transform: translateY(14px) scale(0.985);
+        transform: translate3d(22px, 22px, 0) rotateY(-18deg) rotateX(10deg) scale(0.92);
     }
-    to {
+    60% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translate3d(6px, 6px, 0) rotateY(-6deg) rotateX(3deg) scale(0.985);
+    }
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
+    }
+}
+
+@keyframes pageFlipOut {
+    0% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(-20px, -20px, 0) rotateY(18deg) rotateX(-10deg) scale(0.92);
     }
 }
 
@@ -518,9 +516,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .modal-overlay.opening,
-    .modal-overlay.opening .modal,
-    .modal-overlay.opening .modal-reveal,
+    .modal-overlay.modal-opening,
+    .modal-overlay.modal-closing,
+    .modal-overlay.modal-opening .modal,
+    .modal-overlay.modal-closing .modal,
     .star-btn.star-anim svg {
         animation: none !important;
         transition: none !important;

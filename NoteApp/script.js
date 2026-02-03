@@ -98,60 +98,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // 详情页打开来源
     let modalOpenedFromPersonalSpace = false;
 
-    // 记录最近一次交互点，用于打开详情的“扩散”动效
-    let lastInteractionPoint = {
-        x: Math.round(window.innerWidth / 2),
-        y: Math.round(window.innerHeight / 2)
-    };
+    function playModalOpenAnimation() {
+        if (!noteModal || noteModal.classList.contains('hidden')) return;
+        const modalEl = noteModal.querySelector('.modal');
 
-    const recordPoint = (x, y) => {
-        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
-        lastInteractionPoint = { x, y };
-    };
+        noteModal.classList.remove('modal-closing');
+        noteModal.classList.remove('modal-opening');
+        void noteModal.offsetWidth;
+        noteModal.classList.add('modal-opening');
 
-    document.addEventListener('pointerdown', (e) => {
-        recordPoint(e.clientX, e.clientY);
-    }, { passive: true, capture: true });
+        if (!modalEl) return;
+        const onEnd = (e) => {
+            if (e.target !== modalEl) return;
+            modalEl.removeEventListener('animationend', onEnd);
+            noteModal.classList.remove('modal-opening');
+        };
+        modalEl.addEventListener('animationend', onEnd);
+    }
 
-    document.addEventListener('touchstart', (e) => {
-        const t = e.touches && e.touches[0];
-        if (t) recordPoint(t.clientX, t.clientY);
-    }, { passive: true, capture: true });
-
-    function playModalReveal() {
-        // modal 还没展示时，才能拿到 overlay 的布局
-        const overlay = noteModal;
-        if (!overlay) return;
-
-        let reveal = overlay.querySelector('.modal-reveal');
-        if (!reveal) {
-            reveal = document.createElement('div');
-            reveal.className = 'modal-reveal';
-            overlay.insertBefore(reveal, overlay.firstChild);
+    function requestCloseModal() {
+        if (!noteModal || noteModal.classList.contains('hidden')) return;
+        const modalEl = noteModal.querySelector('.modal');
+        if (!modalEl) {
+            closeModalHandler();
+            return;
         }
 
-        const x = lastInteractionPoint.x;
-        const y = lastInteractionPoint.y;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const maxDx = Math.max(x, vw - x);
-        const maxDy = Math.max(y, vh - y);
-        const maxRadius = Math.hypot(maxDx, maxDy);
-        const base = 24;
-        const scale = Math.max(1, Math.ceil((maxRadius * 2) / base));
+        noteModal.classList.remove('modal-opening');
+        noteModal.classList.add('modal-closing');
 
-        overlay.style.setProperty('--reveal-x', `${x}px`);
-        overlay.style.setProperty('--reveal-y', `${y}px`);
-        overlay.style.setProperty('--reveal-scale', String(scale));
-
-        // 重置并触发 opening 动画
-        overlay.classList.remove('opening');
-        void overlay.offsetWidth; // force reflow
-        overlay.classList.add('opening');
-
-        window.setTimeout(() => {
-            overlay.classList.remove('opening');
-        }, 560);
+        const onEnd = (e) => {
+            if (e.target !== modalEl) return;
+            modalEl.removeEventListener('animationend', onEnd);
+            noteModal.classList.remove('modal-closing');
+            closeModalHandler();
+        };
+        modalEl.addEventListener('animationend', onEnd);
     }
 
     // 初始化
@@ -170,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addNoteBtn.addEventListener('click', () => openModal());
 
         // 关闭模态框
-        closeModal.addEventListener('click', () => closeModalHandler());
+        closeModal.addEventListener('click', () => requestCloseModal());
 
         // 保存笔记（移动端 click 可能不稳定，补 touchend，并做去重）
         const triggerSave = (e) => {
@@ -204,14 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // 点击模态框外部关闭
         noteModal.addEventListener('click', (e) => {
             if (e.target === noteModal) {
-                closeModalHandler();
+                requestCloseModal();
             }
         });
 
         // 键盘快捷键
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !noteModal.classList.contains('hidden')) {
-                closeModalHandler();
+                requestCloseModal();
             }
         });
         
@@ -330,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isEditMode) return; // 编辑模式下不打开模态框
 
         noteModal.classList.remove('hidden');
-        playModalReveal();
+        playModalOpenAnimation();
         currentImages = [];
         
         if (id) {
