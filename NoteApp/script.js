@@ -921,7 +921,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // 更新卡片状态
-    function updateCardStates() {
+    function updateCardStates(forceIndex = null) {
+        if (Number.isInteger(forceIndex)) {
+            updateCardStatesVisual(forceIndex);
+            return;
+        }
+
         const centeredIndex = getCenteredPsCardIndex();
         if (Number.isInteger(centeredIndex)) {
             currentCardIndex = centeredIndex;
@@ -985,6 +990,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let rafPending = false;
         let didDrag = false;
         let lastDragEndAt = 0;
+        let dragStartAt = 0;
+        let carouselRawX = 0;
+
+        const dragScale = 1.15; // 手指移动更短，也能完成翻页
+        const flickVelocityThreshold = 0.6; // px/ms
         
         const onStart = (e) => {
             // 如果点击的是FAB按钮，不处理
@@ -995,15 +1005,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const point = e.touches ? e.touches[0] : e;
             carouselStartX = point.clientX;
             carouselCurrentX = 0;
+            carouselRawX = 0;
             didDrag = false;
+            dragStartAt = Date.now();
         };
         
         const onMove = (e) => {
             if (!isDraggingCarousel) return;
             
             const point = e.touches ? e.touches[0] : e;
-            carouselCurrentX = point.clientX - carouselStartX;
-            if (!didDrag && Math.abs(carouselCurrentX) > 5) didDrag = true;
+            carouselRawX = point.clientX - carouselStartX;
+            carouselCurrentX = carouselRawX * dragScale;
+            if (!didDrag && Math.abs(carouselRawX) > 5) didDrag = true;
             
             const { step } = getPsCarouselMetrics();
             const baseOffset = currentCardIndex * step;
@@ -1029,16 +1042,33 @@ document.addEventListener('DOMContentLoaded', () => {
             isDraggingCarousel = false;
             carousel.classList.remove('dragging');
 
-            // 松手后吸附到“视觉上最居中”的卡片
-            const centeredIndex = getCenteredPsCardIndex();
-            if (Number.isInteger(centeredIndex)) {
-                currentCardIndex = centeredIndex;
+            const { step } = getPsCarouselMetrics();
+            const elapsed = Math.max(1, Date.now() - dragStartAt);
+            const velocity = carouselRawX / elapsed;
+
+            // 目标卡片：优先 flick（短距离快速滑动也翻页），否则用较低阈值的距离换页
+            let targetIndex = currentCardIndex;
+            if (Math.abs(velocity) > flickVelocityThreshold && Math.abs(carouselRawX) > 10) {
+                targetIndex = currentCardIndex + (velocity < 0 ? 1 : -1);
+            } else {
+                const moved = Math.round((-carouselCurrentX) / step);
+                if (Math.abs(carouselCurrentX) > step * 0.2) {
+                    targetIndex = currentCardIndex + moved;
+                } else {
+                    // 很小的移动：直接吸附到当前“最居中”的卡片
+                    const centeredIndex = getCenteredPsCardIndex();
+                    if (Number.isInteger(centeredIndex)) targetIndex = centeredIndex;
+                }
             }
 
+            targetIndex = Math.max(0, Math.min(notes.length - 1, targetIndex));
+            currentCardIndex = targetIndex;
+
             updateCarouselPosition(true);
-            updateCardStates();
+            updateCardStates(targetIndex);
 
             carouselCurrentX = 0;
+            carouselRawX = 0;
             lastDragEndAt = Date.now();
         };
         
@@ -1062,8 +1092,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentCardIndex = centeredIndex;
                 }
                 updateCarouselPosition(true);
-                updateCardStates();
+                updateCardStates(currentCardIndex);
                 carouselCurrentX = 0;
+                carouselRawX = 0;
                 lastDragEndAt = Date.now();
             }
         };
@@ -1088,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 点击其他卡片，滑动到那张卡片
                 currentCardIndex = cardIndex;
                 updateCarouselPosition(true);
-                updateCardStates();
+                updateCardStates(cardIndex);
             }
         });
     }
