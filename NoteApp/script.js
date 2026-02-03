@@ -1091,19 +1091,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const elapsed = Math.max(1, Date.now() - dragStartAt);
             const velocity = carouselRawX / elapsed;
 
+            // 以“松手瞬间最居中”的卡片作为吸附基准，保证居中即 active
+            const centeredAtRelease = getCenteredPsCardIndex();
+            let baseIndex = Number.isInteger(centeredAtRelease) ? centeredAtRelease : currentCardIndex;
+
             // 目标卡片：优先 flick（短距离快速滑动也翻页），否则用较低阈值的距离换页
-            let targetIndex = currentCardIndex;
+            let targetIndex = baseIndex;
             if (Math.abs(velocity) > flickVelocityThreshold && Math.abs(carouselRawX) > 10) {
-                targetIndex = currentCardIndex + (velocity < 0 ? 1 : -1);
-            } else {
-                const moved = Math.round((-carouselCurrentX) / step);
-                if (Math.abs(carouselCurrentX) > step * 0.2) {
-                    targetIndex = currentCardIndex + moved;
-                } else {
-                    // 很小的移动：直接吸附到当前“最居中”的卡片
-                    const centeredIndex = getCenteredPsCardIndex();
-                    if (Number.isInteger(centeredIndex)) targetIndex = centeredIndex;
-                }
+                // flick：在当前居中基准上再翻一页
+                targetIndex = baseIndex + (velocity < 0 ? 1 : -1);
             }
 
             targetIndex = Math.max(0, Math.min(notes.length - 1, targetIndex));
