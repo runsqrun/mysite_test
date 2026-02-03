@@ -968,27 +968,25 @@ document.addEventListener('DOMContentLoaded', () => {
             carousel.classList.remove('dragging');
             
             const threshold = 60;
+            const cardWidth = 300;
+            const gap = 16;
             
-            if (carouselCurrentX < -threshold && currentCardIndex < notes.length - 1) {
-                // 向左滑 - 下一张
-                currentCardIndex++;
-            } else if (carouselCurrentX > threshold && currentCardIndex > 0) {
-                // 向右滑 - 上一张
-                currentCardIndex--;
+            // 根据滑动距离计算应该停在哪张卡片
+            const draggedCards = Math.round(-carouselCurrentX / (cardWidth + gap));
+            let newIndex = currentCardIndex + draggedCards;
+            
+            // 确保在有效范围内
+            newIndex = Math.max(0, Math.min(notes.length - 1, newIndex));
+            
+            // 如果滑动距离不够，保持原位
+            if (Math.abs(carouselCurrentX) < threshold) {
+                newIndex = currentCardIndex;
             }
+            
+            currentCardIndex = newIndex;
             
             updateCarouselPosition(true);
             updateCardStates();
-            
-            // 检测是否为点击（非拖拽）
-            if (Math.abs(carouselCurrentX) < 10) {
-                const card = e.target.closest('.ps-card');
-                if (card && card.classList.contains('active')) {
-                    const noteId = parseInt(card.dataset.id);
-                    closePersonalSpaceHandler();
-                    setTimeout(() => openModal(noteId), 300);
-                }
-            }
             
             carouselCurrentX = 0;
         };
@@ -1012,5 +1010,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 carouselCurrentX = 0;
             }
         };
+        
+        // 卡片点击事件 - 使用click事件避免和拖拽冲突
+        carousel.addEventListener('click', (e) => {
+            const card = e.target.closest('.ps-card');
+            if (!card) return;
+            
+            const cardIndex = parseInt(card.dataset.index);
+            
+            // 如果点击的是当前active的卡片，进入详情页
+            if (cardIndex === currentCardIndex) {
+                const noteId = parseInt(card.dataset.id);
+                closePersonalSpaceHandler();
+                setTimeout(() => openModal(noteId), 300);
+            } else {
+                // 点击其他卡片，滑动到那张卡片
+                currentCardIndex = cardIndex;
+                updateCarouselPosition(true);
+                updateCardStates();
+            }
+        });
     }
 });
