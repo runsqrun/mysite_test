@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化
     init();
 
+    let lastSaveTriggerAt = 0;
+
     function init() {
         renderNotes();
         bindEvents();
@@ -111,8 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // 关闭模态框
         closeModal.addEventListener('click', () => closeModalHandler());
 
-        // 保存笔记
-        saveNote.addEventListener('click', () => saveNoteHandler());
+        // 保存笔记（移动端 click 可能不稳定，补 touchend，并做去重）
+        const triggerSave = (e) => {
+            const now = Date.now();
+            if (now - lastSaveTriggerAt < 400) return;
+            lastSaveTriggerAt = now;
+            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            saveNoteHandler();
+        };
+        saveNote.addEventListener('click', triggerSave);
+        saveNote.addEventListener('touchend', triggerSave, { passive: false });
 
         // 删除笔记
         deleteNote.addEventListener('click', () => deleteNoteHandler());
@@ -341,6 +351,13 @@ document.addEventListener('DOMContentLoaded', () => {
         saveToLocalStorage();
         renderNotes();
         closeModalHandler();
+
+        // 确保回到首页“全部备忘”视图
+        try {
+            switchTab('notes');
+        } catch (_) {
+            // ignore
+        }
     }
 
     // 删除笔记
@@ -782,6 +799,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let carouselStartX = 0;
     let carouselCurrentX = 0;
     let isDraggingCarousel = false;
+
+    function getPsCarouselMetrics() {
+        const firstCard = psCarousel?.querySelector('.ps-card');
+        const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 300;
+
+        let gap = 16;
+        if (psCarousel) {
+            const styles = getComputedStyle(psCarousel);
+            const gapRaw = styles.columnGap || styles.gap;
+            const parsed = parseFloat(gapRaw);
+            if (Number.isFinite(parsed)) gap = parsed;
+        }
+
+        return { cardWidth, gap, step: cardWidth + gap };
+    }
     
     // 切换下拉菜单
     moreBtn.addEventListener('click', (e) => {
@@ -881,9 +913,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新轮播位置
     function updateCarouselPosition(animate = true) {
-        const cardWidth = 300;
-        const gap = 16;
-        const offset = currentCardIndex * (cardWidth + gap);
+        const { step } = getPsCarouselMetrics();
+        const offset = currentCardIndex * step;
         
         psCarousel.style.transition = animate ? 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
         psCarousel.style.transform = `translateX(-${offset}px)`;
@@ -974,9 +1005,8 @@ document.addEventListener('DOMContentLoaded', () => {
             carouselCurrentX = point.clientX - carouselStartX;
             if (!didDrag && Math.abs(carouselCurrentX) > 5) didDrag = true;
             
-            const cardWidth = 300;
-            const gap = 16;
-            const baseOffset = currentCardIndex * (cardWidth + gap);
+            const { step } = getPsCarouselMetrics();
+            const baseOffset = currentCardIndex * step;
             
             carousel.style.transition = 'none';
             carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;

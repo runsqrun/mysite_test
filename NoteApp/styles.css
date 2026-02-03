@@ -551,23 +551,26 @@ body {
 /* 图片预览容器 */
 .image-preview-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-direction: column;
+    gap: 12px;
     margin-top: 16px;
+    width: 100%;
 }
 
 .image-preview-item {
     position: relative;
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
+    width: 100%;
+    border-radius: 16px;
     overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.6);
 }
 
 .image-preview-item img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
 .image-preview-item .remove-image-btn {
@@ -1397,6 +1400,7 @@ body {
     flex-shrink: 0;
     width: 300px;
     height: 420px;
+    box-sizing: border-box;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
