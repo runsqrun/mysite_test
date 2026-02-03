@@ -891,7 +891,36 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新卡片状态
     function updateCardStates() {
-        updateCardStatesVisual(currentCardIndex);
+        const centeredIndex = getCenteredPsCardIndex();
+        if (Number.isInteger(centeredIndex)) {
+            currentCardIndex = centeredIndex;
+            updateCardStatesVisual(centeredIndex);
+        } else {
+            updateCardStatesVisual(currentCardIndex);
+        }
+    }
+
+    function getCenteredPsCardIndex() {
+        const cards = Array.from(document.querySelectorAll('.ps-card'));
+        if (!psCarouselWrapper || cards.length === 0) return null;
+
+        const wrapperRect = psCarouselWrapper.getBoundingClientRect();
+        const wrapperCenterX = wrapperRect.left + wrapperRect.width / 2;
+
+        let bestIndex = 0;
+        let bestDistance = Infinity;
+
+        for (let i = 0; i < cards.length; i++) {
+            const rect = cards[i].getBoundingClientRect();
+            const cardCenterX = rect.left + rect.width / 2;
+            const distance = Math.abs(cardCenterX - wrapperCenterX);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
     }
     
     // 根据指定索引更新卡片视觉状态
@@ -921,6 +950,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function bindCarouselEvents() {
         const wrapper = psCarouselWrapper;
         const carousel = psCarousel;
+
+        let rafPending = false;
         
         const onStart = (e) => {
             // 如果点击的是FAB按钮，不处理
@@ -945,21 +976,18 @@ document.addEventListener('DOMContentLoaded', () => {
             
             carousel.style.transition = 'none';
             carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;
-            
-            // 实时更新卡片状态 - 根据滑动距离计算当前应该高亮的卡片
-            // 当滑动超过卡片宽度一半时切换active状态
-            const halfCard = (cardWidth + gap) / 2;
-            let visualIndex = currentCardIndex;
-            
-            if (carouselCurrentX < -halfCard) {
-                // 向左滑超过一半，下一张active
-                visualIndex = Math.min(notes.length - 1, currentCardIndex + Math.ceil(-carouselCurrentX / (cardWidth + gap)));
-            } else if (carouselCurrentX > halfCard) {
-                // 向右滑超过一半，上一张active
-                visualIndex = Math.max(0, currentCardIndex - Math.ceil(carouselCurrentX / (cardWidth + gap)));
+
+            // 实时更新active：始终选择“视觉上最居中”的卡片
+            if (!rafPending) {
+                rafPending = true;
+                requestAnimationFrame(() => {
+                    rafPending = false;
+                    const centeredIndex = getCenteredPsCardIndex();
+                    if (Number.isInteger(centeredIndex)) {
+                        updateCardStatesVisual(centeredIndex);
+                    }
+                });
             }
-            
-            updateCardStatesVisual(visualIndex);
         };
         
         const onEnd = (e) => {
