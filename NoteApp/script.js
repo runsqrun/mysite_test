@@ -319,6 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = noteContent.value.trim();
         const id = noteId.value;
 
+        const isPersonalSpaceVisible = typeof personalSpacePage !== 'undefined' && personalSpacePage && !personalSpacePage.classList.contains('hidden');
+
         if (!title && !content && currentImages.length === 0) {
             closeModalHandler();
             return;
@@ -352,11 +354,19 @@ document.addEventListener('DOMContentLoaded', () => {
         renderNotes();
         closeModalHandler();
 
-        // 确保回到首页“全部备忘”视图
-        try {
-            switchTab('notes');
-        } catch (_) {
-            // ignore
+        // 如果详情是从“个人空间”打开的，则保持在个人空间；否则回到首页“全部备忘”
+        if (isPersonalSpaceVisible) {
+            try {
+                renderCarousel();
+            } catch (_) {
+                // ignore
+            }
+        } else {
+            try {
+                switchTab('notes');
+            } catch (_) {
+                // ignore
+            }
         }
     }
 
@@ -863,7 +873,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 个人空间内的添加按钮
     psAddNoteBtn.addEventListener('click', () => {
         openModal();
-        closePersonalSpaceHandler();
     });
     
     function openPersonalSpace() {
@@ -1074,7 +1083,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (cardIndex === currentCardIndex) {
                             const noteId = parseInt(card.dataset.id);
                             openModal(noteId);
-                            closePersonalSpaceHandler();
                         } else {
                             currentCardIndex = Math.max(0, Math.min(notes.length - 1, cardIndex));
                             updateCarouselPosition(true);
@@ -1158,7 +1166,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cardIndex === currentCardIndex) {
                 const noteId = parseInt(card.dataset.id);
                 openModal(noteId);
-                closePersonalSpaceHandler();
             } else {
                 // 点击其他卡片，滑动到那张卡片
                 currentCardIndex = cardIndex;
