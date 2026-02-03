@@ -771,11 +771,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const personalSpaceBtn = document.getElementById('personalSpaceBtn');
     const personalSpacePage = document.getElementById('personalSpacePage');
     const closePersonalSpace = document.getElementById('closePersonalSpace');
+    const psCarouselWrapper = document.getElementById('psCarouselWrapper');
     const psCarousel = document.getElementById('psCarousel');
     const psIndicators = document.getElementById('psIndicators');
     const psCurrentIndex = document.getElementById('psCurrentIndex');
     const psTotalCount = document.getElementById('psTotalCount');
-    const editCurrentCardBtn = document.getElementById('editCurrentCardBtn');
+    const psAddNoteBtn = document.getElementById('psAddNoteBtn');
     
     let currentCardIndex = 0;
     let carouselStartX = 0;
@@ -806,6 +807,12 @@ document.addEventListener('DOMContentLoaded', () => {
         closePersonalSpaceHandler();
     });
     
+    // 个人空间内的添加按钮
+    psAddNoteBtn.addEventListener('click', () => {
+        closePersonalSpaceHandler();
+        setTimeout(() => openModal(), 300);
+    });
+    
     function openPersonalSpace() {
         personalSpacePage.classList.remove('hidden');
         currentCardIndex = 0;
@@ -825,17 +832,6 @@ document.addEventListener('DOMContentLoaded', () => {
             psCarousel.innerHTML = '';
             psIndicators.innerHTML = '';
             psCurrentIndex.textContent = '0';
-            
-            const wrapper = document.querySelector('.ps-carousel-wrapper');
-            wrapper.innerHTML = `
-                <div class="ps-empty">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
-                    <p>暂无备忘</p>
-                </div>
-            `;
             return;
         }
         
@@ -879,18 +875,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h3 class="ps-card-title">${escapeHtml(note.title) || '无标题'}</h3>
                 <div class="ps-card-content">${escapeHtml(note.content) || '无内容'}</div>
                 ${imagesHtml}
-                <div class="ps-card-accent"></div>
             </div>
         `;
     }
     
     // 更新轮播位置
     function updateCarouselPosition(animate = true) {
-        const cardWidth = 320;
-        const gap = 20;
+        const cardWidth = 300;
+        const gap = 16;
         const offset = currentCardIndex * (cardWidth + gap);
         
-        psCarousel.style.transition = animate ? 'transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
+        psCarousel.style.transition = animate ? 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
         psCarousel.style.transform = `translateX(-${offset}px)`;
         
         // 更新索引显示
@@ -917,11 +912,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // 绑定轮播事件
+    // 绑定轮播事件 - 在整个wrapper区域
     function bindCarouselEvents() {
+        const wrapper = psCarouselWrapper;
         const carousel = psCarousel;
         
         const onStart = (e) => {
+            // 如果点击的是FAB按钮，不处理
+            if (e.target.closest('.ps-fab')) return;
+            
             isDraggingCarousel = true;
             carousel.classList.add('dragging');
             const point = e.touches ? e.touches[0] : e;
@@ -935,20 +934,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const point = e.touches ? e.touches[0] : e;
             carouselCurrentX = point.clientX - carouselStartX;
             
-            const cardWidth = 320;
-            const gap = 20;
+            const cardWidth = 300;
+            const gap = 16;
             const baseOffset = currentCardIndex * (cardWidth + gap);
             
             carousel.style.transition = 'none';
             carousel.style.transform = `translateX(${-baseOffset + carouselCurrentX}px)`;
         };
         
-        const onEnd = () => {
+        const onEnd = (e) => {
             if (!isDraggingCarousel) return;
             isDraggingCarousel = false;
             carousel.classList.remove('dragging');
             
-            const threshold = 80;
+            const threshold = 60;
             
             if (carouselCurrentX < -threshold && currentCardIndex < notes.length - 1) {
                 // 向左滑 - 下一张
@@ -960,40 +959,38 @@ document.addEventListener('DOMContentLoaded', () => {
             
             updateCarouselPosition(true);
             updateCardStates();
+            
+            // 检测是否为点击（非拖拽）
+            if (Math.abs(carouselCurrentX) < 10) {
+                const card = e.target.closest('.ps-card');
+                if (card && card.classList.contains('active')) {
+                    const noteId = parseInt(card.dataset.id);
+                    closePersonalSpaceHandler();
+                    setTimeout(() => openModal(noteId), 300);
+                }
+            }
+            
             carouselCurrentX = 0;
         };
         
-        // 移除旧事件（如果有）
-        carousel.onmousedown = onStart;
-        carousel.ontouchstart = onStart;
+        // 绑定到wrapper而不是carousel
+        wrapper.onmousedown = onStart;
+        wrapper.ontouchstart = onStart;
         
-        document.onmousemove = (e) => {
-            if (isDraggingCarousel) onMove(e);
-        };
-        carousel.ontouchmove = onMove;
+        wrapper.onmousemove = onMove;
+        wrapper.ontouchmove = onMove;
         
-        document.onmouseup = onEnd;
-        carousel.ontouchend = onEnd;
+        wrapper.onmouseup = onEnd;
+        wrapper.ontouchend = onEnd;
         
-        // 点击卡片打开编辑
-        carousel.addEventListener('click', (e) => {
-            if (Math.abs(carouselCurrentX) > 10) return; // 拖拽时不触发
-            
-            const card = e.target.closest('.ps-card');
-            if (card && card.classList.contains('active')) {
-                const noteId = parseInt(card.dataset.id);
-                closePersonalSpaceHandler();
-                setTimeout(() => openModal(noteId), 300);
+        // 防止拖拽时离开wrapper区域
+        wrapper.onmouseleave = () => {
+            if (isDraggingCarousel) {
+                isDraggingCarousel = false;
+                carousel.classList.remove('dragging');
+                updateCarouselPosition(true);
+                carouselCurrentX = 0;
             }
-        });
+        };
     }
-    
-    // 编辑当前卡片
-    editCurrentCardBtn.addEventListener('click', () => {
-        if (notes.length > 0 && currentCardIndex < notes.length) {
-            const noteId = notes[currentCardIndex].id;
-            closePersonalSpaceHandler();
-            setTimeout(() => openModal(noteId), 300);
-        }
-    });
 });
